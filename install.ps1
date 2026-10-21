@@ -120,9 +120,21 @@ $env:Path += ";$phpPath"
     $env:Path,
     "Machine"
 )
+#Composer
+Write-Log "Instalando Composer..."
 
-# Composer
-Install-WingetPackage "Composer.Composer"
+$Composer = "C:\Temp\Composer-Setup.exe"
+
+Invoke-WebRequest `
+    -Uri "https://getcomposer.org/Composer-Setup.exe" `
+    -OutFile $Composer
+
+Start-Process `
+    -FilePath $Composer `
+    -ArgumentList '/SILENT','/PHP="C:\xampp\php\php.exe"' `
+    -Wait
+
+Write-Log "Composer instalado."
 
 #xdebug
 $XdebugZip = "C:\Temp\xdebug.zip"
