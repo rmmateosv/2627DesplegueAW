@@ -1,6 +1,24 @@
 $ErrorActionPreference = "Stop"
 
 $LogFile = "C:\Install.log"
+#Start-Sleep 20
+$Timeout = 300
+$Inicio = Get-Date
+
+do {
+    $Winget = Get-Command winget.exe -ErrorAction SilentlyContinue
+
+    if ($Winget) {
+        break
+    }
+
+    Start-Sleep 5
+
+} until ((Get-Date) -gt $Inicio.AddSeconds($Timeout))
+
+if (-not $Winget) {
+    throw "Winget no está disponible."
+}
 
 function Write-Log {
     param([string]$Message)
@@ -47,3 +65,16 @@ function Install-WingetPackage {
 }
 
 Install-WingetPackage "Git.Git"
+
+#Desactivar el AutoLogon
+$Reg = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+
+Set-ItemProperty $Reg AutoAdminLogon "0"
+
+Remove-ItemProperty $Reg DefaultPassword -ErrorAction SilentlyContinue
+#Borrar tarea programada
+Unregister-ScheduledTask `
+    -TaskName "InstalarSoftware" `
+    -Confirm:$false
+# Reiniciar
+#Restart-Computer -Force
