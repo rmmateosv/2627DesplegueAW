@@ -2,21 +2,24 @@ $ErrorActionPreference = "Stop"
 
 $LogFile = "C:\Install.log"
 
-$Winget = (Get-Command winget.exe).Source
-
-if (-not $Winget) {
-    throw "No se ha encontrado winget.exe"
-}
-
 function Write-Log {
     param([string]$Message)
 
     $Fecha = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-
     "$Fecha  $Message" | Out-File $LogFile -Append -Encoding utf8
-
-    Write-Host $Message
 }
+
+Write-Log "Inicio del script"
+
+try {
+    $Winget = (Get-Command winget.exe -ErrorAction Stop).Source
+    Write-Log "Winget encontrado en: $Winget"
+}
+catch {
+    Write-Log "ERROR: winget.exe no encontrado."
+    throw
+}
+
 function Install-WingetPackage {
 
     param(
@@ -28,10 +31,13 @@ function Install-WingetPackage {
 
     & $Winget install `
         --id $Id `
+		--source winget `
         --exact `
         --silent `
         --accept-package-agreements `
         --accept-source-agreements
+	
+	Write-Log "Código de salida: $LASTEXITCODE"
 
     if ($LASTEXITCODE -ne 0) {
         throw "Error instalando $Id"
@@ -41,5 +47,3 @@ function Install-WingetPackage {
 }
 
 Install-WingetPackage "Git.Git"
-Install-WingetPackage "Google.Chrome"
-Install-WingetPackage "Notepad++.Notepad++"
