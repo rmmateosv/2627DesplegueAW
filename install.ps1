@@ -97,6 +97,7 @@ if (Test-Path $Code) {
     & $Code --install-extension xdebug.php-debug --force
     & $Code --install-extension onecentlin.laravel5-snippets --force
     & $Code --install-extension onecentlin.laravel-blade --force
+	& $Code --install-extension rangav.vscode-thunder-client --force
 
     Write-Log "Extensiones instaladas."
 
@@ -110,9 +111,61 @@ else {
 # XAMPP 8.2
 Install-WingetPackage "ApacheFriends.Xampp.8.2"
 
+$phpPath = "C:\xampp\php"
+
+$env:Path += ";$phpPath"
+
+[Environment]::SetEnvironmentVariable(
+    "Path",
+    $env:Path,
+    "Machine"
+)
+
 # Composer
 Install-WingetPackage "Composer.Composer"
 
+#xdebug
+$XdebugZip = "C:\Temp\xdebug.zip"
+$XdebugDir = "C:\Temp\xdebug"
+
+New-Item -ItemType Directory -Force -Path "C:\Temp" | Out-Null
+
+Invoke-WebRequest `
+    -Uri "https://xdebug.org/files/php_xdebug-3.3.2-8.2-ts-vs16-x86_64.zip" `
+    -OutFile $XdebugZip
+
+Expand-Archive `
+    -Path $XdebugZip `
+    -DestinationPath $XdebugDir `
+    -Force
+
+Copy-Item `
+    "$XdebugDir\php_xdebug.dll" `
+    "C:\xampp\php\ext\" `
+    -Force
+
+Write-Log "Xdebug copiado."
+$Ini = "C:\xampp\php\php.ini"
+
+Write-Log "Configurando php.ini..."
+(Get-Content $Ini) `
+    -replace ';extension=zip','extension=zip' |
+Set-Content $Ini
+Add-Content $Ini ""
+
+Add-Content $Ini "; Xdebug"
+
+Add-Content $Ini "zend_extension=C:\xampp\php\ext\php_xdebug.dll"
+
+Add-Content $Ini "xdebug.mode=debug"
+
+Add-Content $Ini "xdebug.start_with_request=yes"
+
+Add-Content $Ini "xdebug.client_port=9003"
+
+Add-Content $Ini "xdebug.client_host=127.0.0.1"
+
+Write-Log "php.ini actualizado."
 
 #Desactivar el AutoLogon
 $Reg = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
