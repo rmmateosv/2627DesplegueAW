@@ -144,38 +144,42 @@ New-Item `
 Write-Log "Instalando Composer..."
 
 New-Item -ItemType Directory -Path "C:\Temp" -Force | Out-Null
+# Composer
+Write-Log "Creando carpeta de Composer..."
 
-$Composer = "C:\Temp\Composer-Setup.exe"
+New-Item `
+    -ItemType Directory `
+    -Path "C:\Composer" `
+    -Force | Out-Null
+	
+Write-Log "Descargando Composer..."
 
-try {
+Invoke-WebRequest `
+    -Uri "https://getcomposer.org/download/latest-stable/composer.phar" `
+    -OutFile "C:\Composer\composer.phar"
 
-    Invoke-WebRequest `
-        -Uri "https://getcomposer.org/Composer-Setup.exe" `
-        -OutFile $Composer
+Write-Log "Composer descargado."
 
-    Write-Log "Instalador descargado."
+Write-Log "Creando composer.bat..."
+
+Write-Log "Añadiendo Composer al PATH..."
+
+$Path = [Environment]::GetEnvironmentVariable("Path","Machine")
+
+if ($Path -notmatch "C:\\Composer") {
+
+    [Environment]::SetEnvironmentVariable(
+        "Path",
+        "$Path;C:\Composer",
+        "Machine"
+    )
 
 }
-catch {
+$env:Path += ";C:\Composer"
+Write-Log "Comprobando Composer..."
+composer --version | Out-File $LogFile -Append
+Set-Alias composer "C:\Composer\composer.bat"
 
-    Write-Log "ERROR descargando Composer: $($_.Exception.Message)"
-    throw
-
-}
-
-if (!(Test-Path $Composer)) {
-
-    Write-Log "No existe Composer-Setup.exe"
-    throw
-
-}
-
-Start-Process `
-    -FilePath $Composer `
-    -ArgumentList '/SILENT','/PHP="C:\xampp\php\php.exe"' `
-    -Wait
-
-Write-Log "Composer instalado."
 
 #xdebug
 $XdebugZip = "C:\Temp\xdebug.zip"
