@@ -161,6 +161,10 @@ Invoke-WebRequest `
 Write-Log "Composer descargado."
 
 Write-Log "Creando composer.bat..."
+@'
+@echo off
+"C:\xampp\php\php.exe" "C:\Composer\composer.phar" %*
+'@ | Set-Content "C:\Composer\composer.bat" -Encoding ASCII
 
 Write-Log "Añadiendo Composer al PATH..."
 
