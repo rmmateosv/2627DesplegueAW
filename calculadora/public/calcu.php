@@ -1,8 +1,5 @@
 <?php
-require_once
-use App\Modelo\Modelo;
-
-$m = new Modelo();
+require_once '../controlador/controlador.php'
 
 ?> 
 <!DOCTYPE html>

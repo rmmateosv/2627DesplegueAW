@@ -122,12 +122,39 @@ $env:Path += ";$phpPath"
 )
 #Composer
 Write-Log "Instalando Composer..."
+New-Item `
+    -ItemType Directory `
+    -Path "C:\Temp" `
+    -Force | Out-Null
+	
+Write-Log "Instalando Composer..."
+
+New-Item -ItemType Directory -Path "C:\Temp" -Force | Out-Null
 
 $Composer = "C:\Temp\Composer-Setup.exe"
 
-Invoke-WebRequest `
-    -Uri "https://getcomposer.org/Composer-Setup.exe" `
-    -OutFile $Composer
+try {
+
+    Invoke-WebRequest `
+        -Uri "https://getcomposer.org/Composer-Setup.exe" `
+        -OutFile $Composer
+
+    Write-Log "Instalador descargado."
+
+}
+catch {
+
+    Write-Log "ERROR descargando Composer: $($_.Exception.Message)"
+    throw
+
+}
+
+if (!(Test-Path $Composer)) {
+
+    Write-Log "No existe Composer-Setup.exe"
+    throw
+
+}
 
 Start-Process `
     -FilePath $Composer `
