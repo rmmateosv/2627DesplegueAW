@@ -100,7 +100,21 @@ if (Test-Path $Code) {
 	& $Code --install-extension rangav.vscode-thunder-client --force
 
     Write-Log "Extensiones instaladas."
+	
+	Write-Log "Configurando Visual Studio Code..."
 
+	$SettingsFolder = "C:\Users\Alumno\AppData\Roaming\Code\User"
+	$SettingsFile = "$SettingsFolder\settings.json"
+	
+	New-Item -ItemType Directory -Path $SettingsFolder -Force | Out-Null
+
+@'
+{
+    "workbench.colorTheme": "Default Light Modern"
+}
+'@ | Set-Content $SettingsFile -Encoding UTF8
+
+Write-Log "Tema claro configurado."
 }
 else {
 
