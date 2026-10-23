@@ -186,27 +186,9 @@ Set-Alias composer "C:\Composer\composer.bat"
 
 
 #xdebug
-$XdebugZip = "C:\Temp\xdebug.zip"
-$XdebugDir = "C:\Temp\xdebug"
-
-New-Item -ItemType Directory -Force -Path "C:\Temp" | Out-Null
-
-Invoke-WebRequest `
-    -Uri "https://xdebug.org/files/php_xdebug-3.3.2-8.2-ts-vs16-x86_64.zip" `
-    -OutFile $XdebugZip
-
-Expand-Archive `
-    -Path $XdebugZip `
-    -DestinationPath $XdebugDir `
-    -Force
-
-Copy-Item `
-    "$XdebugDir\php_xdebug.dll" `
-    "C:\xampp\php\ext\" `
-    -Force
-
-Write-Log "Xdebug copiado."
-$Ini = "C:\xampp\php\php.ini"
+Write-Log "Configurando xdebug..."
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/rmmateosv/2627DesplegueAW/refs/heads/master/php_xdebug.dll" -OutFile "C:\xampp\php\ext\php_xdebug.dll"
+Write-Log "fin xdebug"
 
 Write-Log "Configurando php.ini..."
 (Get-Content $Ini) `
@@ -214,19 +196,38 @@ Write-Log "Configurando php.ini..."
 Set-Content $Ini
 Add-Content $Ini ""
 
-Add-Content $Ini "; Xdebug"
+Add-Content $Ini "[Xdebug]"
 
-Add-Content $Ini "zend_extension=C:\xampp\php\ext\php_xdebug.dll"
+Add-Content $Ini "zend_extension=xdebug"
 
 Add-Content $Ini "xdebug.mode=debug"
 
 Add-Content $Ini "xdebug.start_with_request=yes"
 
-Add-Content $Ini "xdebug.client_port=9003"
-
-Add-Content $Ini "xdebug.client_host=127.0.0.1"
-
 Write-Log "php.ini actualizado."
+
+Write-Log " Español (España)..."
+$LangList = New-WinUserLanguageList es-ES
+
+$LangList[0].InputMethodTips.Clear()
+
+$LangList[0].InputMethodTips.Add("040A:0000040A")
+
+Set-WinUserLanguageList $LangList -Force
+Set-WinSystemLocale es-ES
+Set-Culture es-ES
+Set-WinUILanguageOverride es-ES
+
+$LangList = New-WinUserLanguageList es-ES
+$LangList[0].InputMethodTips.Clear()
+$LangList[0].InputMethodTips.Add("040A:0000040A")
+Set-WinUserLanguageList $LangList -Force
+
+Copy-UserInternationalSettingsToSystem `
+    -WelcomeScreen $true `
+    -NewUser $true
+
+Write-Log "Español configurado."
 
 #Desactivar el AutoLogon
 $Reg = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
