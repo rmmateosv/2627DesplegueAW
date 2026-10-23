@@ -191,6 +191,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/rmmateosv/2627Desplegu
 Write-Log "fin xdebug"
 
 Write-Log "Configurando php.ini..."
+$Ini = "C:\xampp\php\php.ini"
 (Get-Content $Ini) `
     -replace ';extension=zip','extension=zip' |
 Set-Content $Ini
