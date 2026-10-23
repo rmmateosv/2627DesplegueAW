@@ -63,6 +63,7 @@ function Install-WingetPackage {
 
     Write-Log "$Id instalado correctamente."
 }
+try{
 #Git
 Install-WingetPackage "Git.Git"
 # Google Chrome
@@ -231,15 +232,33 @@ Copy-UserInternationalSettingsToSystem `
 Write-Log "Español configurado."
 
 #Desactivar el AutoLogon
+Write-Log "Desactivar el AutoLogon"
 $Reg = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
 
 Set-ItemProperty $Reg AutoAdminLogon "0"
 
 Remove-ItemProperty $Reg DefaultPassword -ErrorAction SilentlyContinue
+}
+catch {
 
-#Borrar tarea programada
-Unregister-ScheduledTask `
-    -TaskName "InstalarSoftware" `
-    -Confirm:$false
+    Write-Log "ERROR: $($_.Exception.Message)"
+    throw
+
+}
+finally {
+
+    Write-Log "Eliminando tarea programada..."
+
+    try {
+        Unregister-ScheduledTask `
+            -TaskName "InstallSoftware" `
+            -Confirm:$false `
+            -ErrorAction SilentlyContinue
+    }
+    catch {
+        Write-Log "No se pudo eliminar la tarea: $($_.Exception.Message)"
+    }
+
+}
 # Reiniciar
-#Restart-Computer -Force
+Restart-Computer -Force
