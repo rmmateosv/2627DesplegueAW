@@ -258,7 +258,20 @@ finally {
     catch {
         Write-Log "No se pudo eliminar la tarea: $($_.Exception.Message)"
     }
+	 # Borrar el script de instalación
+    try {
+        Remove-Item "C:\Scripts\install.ps1" `
+            -Force `
+            -ErrorAction SilentlyContinue
+
+        Write-Log "install.ps1 eliminado."
+    }
+    catch {
+        Write-Log "No se pudo eliminar install.ps1: $($_.Exception.Message)"
+    }
+	Write-Log "Instalación finalizada."
 
 }
 # Reiniciar
+Write-Log "Reincio de instancia"
 Restart-Computer -Force
