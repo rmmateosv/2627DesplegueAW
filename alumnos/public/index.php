@@ -1,6 +1,4 @@
-<?php
-require_once '../controlador/controlador.php';
-?> 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,5 +13,14 @@ require_once '../controlador/controlador.php';
         <li><a href="index.php?$alumno=2&nombre=Ana">Ana</a></li>
         <li><a href="index.php?$alumno=3&nombre=María">María</a></li>
     </ul>
+
+    <?php 
+    if(isset($_GET['alumno'])){
+        echo '<h1>Alumno: '.$_GET['alumno'].'</h1>';
+    }
+    if(isset($_GET['nombre'])){
+        echo '<h1>Nombre: '.$_GET['nombre'].'</h1>';
+    }
+     ?>
 </body>
 </html>
