@@ -79,13 +79,7 @@ Install-WingetPackage "Notepad++.Notepad++"
 Install-WingetPackage "Oracle.MySQL"
 
 # MySQL Workbench
-#Install-WingetPackage "Oracle.MySQLWorkbench"
-$Winget install --id "Oracle.MySQLWorkbench" --version "8.0.47" --source winget --exact --silent --accept-package-agreements --accept-source-agreements
-if ($LASTEXITCODE -ne 0) {
-        throw "Error instalando $Id"
-    }
-
-Write-Log "$Id instalado correctamente."
+Install-WingetPackage "Oracle.MySQLWorkbench"
 
 # Visual Studio Code
 Install-WingetPackage "Microsoft.VisualStudioCode"
@@ -236,29 +230,6 @@ Copy-UserInternationalSettingsToSystem `
     -NewUser $true
 
 Write-Log "Español configurado."
-
-Write-Log "Descargando Eclipse..."
-
-$Url = "https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/2026-09/R/eclipse-jee-2026-09-R-win32-x86_64.zip&mirror_id=1045"
-
-$Zip = "C:\Temp\eclipse.zip"
-
-Invoke-WebRequest `
-    -Uri $Url `
-    -OutFile $Zip
-
-Write-Log "Eclipse descargado."
-
-Write-Log "Descomprimiendo Eclipse..."
-
-$Destino = "C:\Users\Alumno\Desktop"
-
-Expand-Archive `
-    -Path $Zip `
-    -DestinationPath $Destino `
-    -Force
-
-Write-Log "Eclipse descomprimido."
 
 #Desactivar el AutoLogon
 Write-Log "Desactivar el AutoLogon"
