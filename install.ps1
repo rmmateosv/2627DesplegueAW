@@ -39,12 +39,12 @@ catch {
 }
 
 function Install-WingetPackage {
-	
+
     param(
         [Parameter(Mandatory)]
         [string]$Id
     )
-	try{
+
     Write-Log "Instalando $Id..."
 
     & $Winget install `
@@ -62,12 +62,6 @@ function Install-WingetPackage {
     }
 
     Write-Log "$Id instalado correctamente."
-	}
-	catch {
-
-    Write-Log "ERROR: $($_.Exception.Message)"
-
-	}
 }
 try{
 #Git
@@ -83,7 +77,7 @@ Install-WingetPackage "Notepad++.Notepad++"
 
 # MySQL Server
 Install-WingetPackage "Oracle.MySQL"
-try{
+
 # MySQL Workbench
 #Install-WingetPackage "Oracle.MySQLWorkbench"
 $Winget install --id "Oracle.MySQLWorkbench" --version "8.0.47" --source winget --exact --silent --accept-package-agreements --accept-source-agreements
@@ -92,11 +86,7 @@ if ($LASTEXITCODE -ne 0) {
     }
 
 Write-Log "$Id instalado correctamente."
-}
-catch {
 
-    Write-Log "ERROR: $($_.Exception.Message)"
-}
 # Visual Studio Code
 Install-WingetPackage "Microsoft.VisualStudioCode"
 Write-Log "Instalando extensiones de Visual Studio Code..."
@@ -246,7 +236,7 @@ Copy-UserInternationalSettingsToSystem `
     -NewUser $true
 
 Write-Log "Español configurado."
-try{
+
 Write-Log "Descargando Eclipse..."
 
 $Url = "https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/2026-09/R/eclipse-jee-2026-09-R-win32-x86_64.zip&mirror_id=1045"
@@ -269,11 +259,7 @@ Expand-Archive `
     -Force
 
 Write-Log "Eclipse descomprimido."
-}
-catch {
 
-    Write-Log "ERROR: $($_.Exception.Message)"
-}
 #Desactivar el AutoLogon
 Write-Log "Desactivar el AutoLogon"
 $Reg = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
