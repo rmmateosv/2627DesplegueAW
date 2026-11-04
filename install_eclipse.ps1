@@ -128,29 +128,11 @@ Install-WingetPackage `
     -Version "8.0.47"
 
 #Eclipse
-Write-Log "Descargando Eclipse..."
-
-$Url = "https://eclipse.mirror.liteserver.nl/technology/epp/downloads/release/2026-09/R/eclipse-jee-2026-09-R-win32-x86_64.zip"
-
-
-$Zip = "C:\Scripts\eclipse.zip"
-
-Invoke-WebRequest `
-    -Uri $Url `
-    -OutFile $Zip
-
-Write-Log "Eclipse descargado."
-
-Write-Log "Descomprimiendo Eclipse..."
-
-$Destino = "C:\Users\Alumno\Desktop"
-
-Expand-Archive `
-    -Path $Zip `
-    -DestinationPath $Destino `
-    -Force
-
-Write-Log "Eclipse descomprimido."
+# Eclipse Enterprise Java and Web Developers
+Install-WingetPackage `
+    -Id "EclipseFoundation.Eclipse.JEE" `
+    -Version "2026-09"
+Write-Log "Eclipse instalado."
 
 #Desactivar el AutoLogon
 Write-Log "Desactivar el AutoLogon"
