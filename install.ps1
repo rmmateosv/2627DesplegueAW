@@ -63,6 +63,51 @@ function Install-WingetPackage {
 
     Write-Log "$Id instalado correctamente."
 }
+
+function Install-WingetPackage2 {
+
+    param(
+        [Parameter(Mandatory)]
+        [string]$Id,
+
+        [string]$Version
+    )
+
+    Write-Log "Instalando $Id..."
+
+    $Argumentos = @(
+        "install"
+        "--id", $Id
+        "--source", "winget"
+        "--exact"
+        "--silent"
+        "--accept-package-agreements"
+        "--accept-source-agreements"
+    )
+
+    if ($Version) {
+        $Argumentos += @("--version", $Version)
+    }
+
+    & $Winget @Argumentos
+	$Salida = & $Winget @Argumentos 2>&1
+
+	$Salida | ForEach-Object {
+		Write-Log $_
+	}
+
+    Write-Log "Código de salida: $LASTEXITCODE"
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "Error instalando $Id"
+    }
+
+    Write-Log "$Id instalado correctamente."
+	while (Get-Process msiexec -ErrorAction SilentlyContinue) {
+    Write-Log "Esperando a que finalice msiexec..."
+    Start-Sleep 5
+	}
+}
 try{
 #Git
 Install-WingetPackage "Git.Git"
@@ -79,7 +124,9 @@ Install-WingetPackage "Notepad++.Notepad++"
 Install-WingetPackage "Oracle.MySQL"
 
 # MySQL Workbench
-Install-WingetPackage "Oracle.MySQLWorkbench"
+Install-WingetPackage2 `
+    -Id "Oracle.MySQLWorkbench" `
+    -Version "8.0.47"
 
 # Visual Studio Code
 Install-WingetPackage "Microsoft.VisualStudioCode"
@@ -230,6 +277,29 @@ Copy-UserInternationalSettingsToSystem `
     -NewUser $true
 
 Write-Log "Español configurado."
+
+Write-Log "Descargando Eclipse..."
+
+$Url = "https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/2026-09/R/eclipse-jee-2026-09-R-win32-x86_64.zip"
+
+$Zip = "C:\Temp\eclipse.zip"
+
+Invoke-WebRequest `
+    -Uri $Url `
+    -OutFile $Zip
+
+Write-Log "Eclipse descargado."
+
+Write-Log "Descomprimiendo Eclipse..."
+
+$Destino = "C:\Users\Alumno\Desktop"
+
+Expand-Archive `
+    -Path $Zip `
+    -DestinationPath $Destino `
+    -Force
+
+Write-Log "Eclipse descomprimido."
 
 #Desactivar el AutoLogon
 Write-Log "Desactivar el AutoLogon"
