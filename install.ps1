@@ -122,7 +122,7 @@ Install-WingetPackage "Notepad++.Notepad++"
 Install-WingetPackage "Oracle.MySQL"
 
 # MySQL Workbench
-Install-WingetPackage2 `
+Install-WingetPackage `
     -Id "Oracle.MySQLWorkbench" `
     -Version "8.0.47"
 
