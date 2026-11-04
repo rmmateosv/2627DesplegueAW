@@ -38,33 +38,37 @@ catch {
     throw
 }
 
-function Install-WingetPackage {
+try {
+	Write-Log " Español (España)..."
+	$LangList = New-WinUserLanguageList es-ES
 
-    param(
-        [Parameter(Mandatory)]
-        [string]$Id
-    )
+	$LangList[0].InputMethodTips.Clear()
 
-    Write-Log "Instalando $Id..."
+	$LangList[0].InputMethodTips.Add("040A:0000040A")
 
-    & $Winget install `
-        --id $Id `
-		--source winget `
-        --exact `
-        --silent `
-        --accept-package-agreements `
-        --accept-source-agreements
-	
-	Write-Log "Código de salida: $LASTEXITCODE"
+	Set-WinUserLanguageList $LangList -Force
+	Set-WinSystemLocale es-ES
+	Set-Culture es-ES
+	Set-WinUILanguageOverride es-ES
 
-    if ($LASTEXITCODE -ne 0) {
-        throw "Error instalando $Id"
-    }
+	$LangList = New-WinUserLanguageList es-ES
+	$LangList[0].InputMethodTips.Clear()
+	$LangList[0].InputMethodTips.Add("040A:0000040A")
+	Set-WinUserLanguageList $LangList -Force
 
-    Write-Log "$Id instalado correctamente."
+	Copy-UserInternationalSettingsToSystem `
+		-WelcomeScreen $true `
+		-NewUser $true
+
+	Write-Log "Español configurado."
+}
+catch {
+    Write-Log "ERROR: Configurando español"
+    throw
 }
 
-function Install-WingetPackage2 {
+#función para instalar
+function Install-WingetPackage {
 
     param(
         [Parameter(Mandatory)]
@@ -90,24 +94,18 @@ function Install-WingetPackage2 {
     }
 
     & $Winget @Argumentos
-	$Salida = & $Winget @Argumentos 2>&1
-
-	$Salida | ForEach-Object {
-		Write-Log $_
-	}
 
     Write-Log "Código de salida: $LASTEXITCODE"
 
     if ($LASTEXITCODE -ne 0) {
-        throw "Error instalando $Id"
-    }
+        Write-Log "ERROR instalando $Id"
+        return $false
+    }	
 
     Write-Log "$Id instalado correctamente."
-	while (Get-Process msiexec -ErrorAction SilentlyContinue) {
-    Write-Log "Esperando a que finalice msiexec..."
-    Start-Sleep 5
-	}
+    return $true
 }
+
 try{
 #Git
 Install-WingetPackage "Git.Git"
@@ -255,51 +253,6 @@ Add-Content $Ini "xdebug.start_with_request=yes"
 
 Write-Log "php.ini actualizado."
 
-Write-Log " Español (España)..."
-$LangList = New-WinUserLanguageList es-ES
-
-$LangList[0].InputMethodTips.Clear()
-
-$LangList[0].InputMethodTips.Add("040A:0000040A")
-
-Set-WinUserLanguageList $LangList -Force
-Set-WinSystemLocale es-ES
-Set-Culture es-ES
-Set-WinUILanguageOverride es-ES
-
-$LangList = New-WinUserLanguageList es-ES
-$LangList[0].InputMethodTips.Clear()
-$LangList[0].InputMethodTips.Add("040A:0000040A")
-Set-WinUserLanguageList $LangList -Force
-
-Copy-UserInternationalSettingsToSystem `
-    -WelcomeScreen $true `
-    -NewUser $true
-
-Write-Log "Español configurado."
-
-Write-Log "Descargando Eclipse..."
-
-$Url = "https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/2026-09/R/eclipse-jee-2026-09-R-win32-x86_64.zip"
-
-$Zip = "C:\Temp\eclipse.zip"
-
-Invoke-WebRequest `
-    -Uri $Url `
-    -OutFile $Zip
-
-Write-Log "Eclipse descargado."
-
-Write-Log "Descomprimiendo Eclipse..."
-
-$Destino = "C:\Users\Alumno\Desktop"
-
-Expand-Archive `
-    -Path $Zip `
-    -DestinationPath $Destino `
-    -Force
-
-Write-Log "Eclipse descomprimido."
 
 #Desactivar el AutoLogon
 Write-Log "Desactivar el AutoLogon"

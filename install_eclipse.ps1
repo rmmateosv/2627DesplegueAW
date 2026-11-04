@@ -102,21 +102,6 @@ function Install-WingetPackage {
         return $false
     }
 	
-	#Esperar a que termine el instalador, como mucho espera 1 minuto
-	$Timeout = 60
-	$Inicio = Get-Date
-
-	while (Get-Process msiexec -ErrorAction SilentlyContinue) {
-
-		if ((Get-Date) -gt $Inicio.AddSeconds($Timeout)) {
-			Write-Log "Tiempo de espera agotado para msiexec."
-			break
-		}
-
-		Write-Log "Esperando a que finalice msiexec..."
-		Start-Sleep -Seconds 5
-	}
-
     Write-Log "$Id instalado correctamente."
     return $true
 }
@@ -147,7 +132,7 @@ Write-Log "Descargando Eclipse..."
 
 $Url = "https://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/2026-09/R/eclipse-jee-2026-09-R-win32-x86_64.zip"
 
-$Zip = "C:\Temp\eclipse.zip"
+$Zip = "C:\Scripts\eclipse.zip"
 
 Invoke-WebRequest `
     -Uri $Url `
