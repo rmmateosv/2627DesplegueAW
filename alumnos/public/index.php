@@ -7,6 +7,7 @@
     <title>Document</title>
 </head>
 <body>
+    <h1><a href="https://iesaugustobriga.educarex.es/">IES Augustóbriga</a></h1>
     <h2>ALUMNOS</h2>
     <ul>
         <li><a href="index.php?alumno=1&nombre=Luis">Luis</a></li>
