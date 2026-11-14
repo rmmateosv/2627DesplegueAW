@@ -134,6 +134,30 @@ Install-WingetPackage `
     -Version "2026-09"
 Write-Log "Eclipse instalado."
 
+#Crear acceso directo a eclipse en el escritorio
+Write-Host "Creando acceso directo a Eclipse"
+$EclipseExe = Get-ChildItem `
+    "$env:LOCALAPPDATA\Microsoft\WinGet\Packages" `
+    -Filter "eclipse.exe" `
+    -Recurse |
+    Select-Object -First 1 -ExpandProperty FullName
+
+if ($EclipseExe) {
+    $Desktop = [Environment]::GetFolderPath("Desktop")
+
+    $WshShell = New-Object -ComObject WScript.Shell
+    $Shortcut = $WshShell.CreateShortcut((Join-Path $Desktop "Eclipse IDE.lnk"))
+    $Shortcut.TargetPath = $EclipseExe
+    $Shortcut.WorkingDirectory = Split-Path $EclipseExe
+    $Shortcut.IconLocation = "$EclipseExe,0"
+    $Shortcut.Save()
+
+    Write-Host "Acceso directo creado en el escritorio."
+}
+else {
+    Write-Warning "No se encontró eclipse.exe."
+}
+
 #Desactivar el AutoLogon
 Write-Log "Desactivar el AutoLogon"
 $Reg = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
