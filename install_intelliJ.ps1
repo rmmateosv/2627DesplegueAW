@@ -130,6 +130,9 @@ Install-WingetPackage "JetBrains.DataGrip"
 
 Write-Log "Java, IntelliJ y DataGrip instalados."
 
+# Postman
+Install-WingetPackage "Postman.Postman"
+
 # Crear acceso directo a IntelliJ IDEA
 Write-Log "Creando acceso directo de IntelliJ IDEA"
 
@@ -182,7 +185,30 @@ else {
     Write-Log "No se encontró datagrip64.exe."
 }
 
+Write-Log "Creando acceso directo de Postman"
 
+$PostmanExe = Get-ChildItem `
+    "$env:LOCALAPPDATA\Microsoft\WinGet\Packages" `
+    -Filter "Postman.exe" `
+    -Recurse -ErrorAction SilentlyContinue |
+    Select-Object -First 1 -ExpandProperty FullName
+
+if ($PostmanExe) {
+
+    $Desktop = [Environment]::GetFolderPath("Desktop")
+
+    $WshShell = New-Object -ComObject WScript.Shell
+    $Shortcut = $WshShell.CreateShortcut((Join-Path $Desktop "Postman.lnk"))
+    $Shortcut.TargetPath = $PostmanExe
+    $Shortcut.WorkingDirectory = Split-Path $PostmanExe
+    $Shortcut.IconLocation = "$PostmanExe,0"
+    $Shortcut.Save()
+
+    Write-Log "Acceso directo de Postman creado."
+}
+else {
+    Write-Log "No se encontró Postman.exe."
+}
 
 #Desactivar el AutoLogon
 Write-Log "Desactivar el AutoLogon"
